@@ -24,7 +24,7 @@ class PlaceController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000'
+                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
                         ]);
     }
 
@@ -36,7 +36,7 @@ class PlaceController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000',
+                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN'],
                             'x-csrf-token' => $request->get('x-csrf-token')
                         ]);
     }
@@ -49,7 +49,7 @@ class PlaceController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000',
+                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN'],
                             'x-csrf-token' => $request->get('x-csrf-token')
                         ]);
     }

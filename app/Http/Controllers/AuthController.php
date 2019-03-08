@@ -21,8 +21,8 @@ class AuthController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000'
-                        ]);;
+                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                        ]);
     }
 
     public function index()
@@ -32,8 +32,8 @@ class AuthController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000'
-                        ]);;
+                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                        ]);
     }
 
     public function login(Request $request)
@@ -50,7 +50,7 @@ class AuthController extends Controller
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                                 'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000'
+                                'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
                             ]);
         }
 
@@ -62,7 +62,7 @@ class AuthController extends Controller
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                                 'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000'
+                                'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
                             ]);
         }
         else if ($user != null && !Hash::check($request->password, $user->password)) {
@@ -72,7 +72,7 @@ class AuthController extends Controller
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                                 'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000'
+                                'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
                             ]);
         }
 
@@ -97,7 +97,7 @@ class AuthController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000',
+                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN'],
                             'nomi-token' => $token
                         ]);
     }
@@ -113,7 +113,7 @@ class AuthController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => 'http://192.168.131.12:3000'
+                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
                         ]);
     }
 

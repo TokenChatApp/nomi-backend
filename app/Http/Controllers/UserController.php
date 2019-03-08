@@ -57,7 +57,6 @@ class UserController extends Controller
                 'email' => 'required|max:200|email|unique:users,email',
                 'password' => 'required|string|max:100',
                 'gender' => 'required|max:10',
-                'postalCode' => 'required|max:6',
                 'cityId' => 'numeric',
                 'placeId' => 'numeric',
                 'height' => 'numeric',
@@ -96,7 +95,7 @@ class UserController extends Controller
         $user->status = 1;
         $user->last_logged_in = Carbon::now('Asia/Singapore')->toDateTimeString();
 
-        if ($request->Gender == 'Women') {
+        if ($request->gender == 'Women') {
             $user->rate_per_hour = 5000; 
             $user->city_id = $request->cityId;
             $user->place_id = $request->placeId;
@@ -140,12 +139,16 @@ class UserController extends Controller
         $users = array();
 
         if ($request->placeId) {
-            $users = User::where('place_id', $request->placeId)
-                         ->andWhere('gender', 'Women');
+            $users = User::select('url','avatar','displayname','username','age','rate_per_hour','height','weight','language','nationality')
+                        ->where('place_id', $request->placeId)
+                        ->where('gender', 'Women')
+                        ->get();
         }
         if ($request->cityId) {
-            $users = User::where('city_id', $request->placeId)
-                         ->andWhere('gender', 'Women');
+            $users = User::select('url','avatar','displayname','username','age','rate_per_hour','height','weight','language','nationality')
+                        ->where('city_id', $request->cityId)
+                        ->where('gender', 'Women')
+                        ->get();
         }
         
         return response()->json($users)
@@ -185,7 +188,7 @@ class UserController extends Controller
         if ($request->cityId) {
             $user->city_id = $request->cityId;
         }
-        
+
         $user->save();
         return response()->json($user)
                          ->withHeaders([

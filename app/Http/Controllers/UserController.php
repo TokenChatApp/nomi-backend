@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 require '../vendor/autoload.php';
 
+use App\Settings;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Firebase\JWT\ExpiredException;
+use GrahamCampbell\Flysystem\Facades\Flysystem;
 
 class UserController extends Controller
 {
@@ -26,7 +31,7 @@ class UserController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN
                         ]);;
     }
 
@@ -73,7 +78,7 @@ class UserController extends Controller
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                                 'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
                             ]);
         }
 
@@ -105,6 +110,14 @@ class UserController extends Controller
             $user->nationality = $request->nationality;
         }
 
+        if ($request->file('avatar')) {
+            $filename = $request->file('avatar')->getClientOriginalName();;
+            $image = $request->file('avatar');
+            Flysystem::put($filename, File::get($request->file('avatar')));
+
+            $user->avatar = $filename;
+        }
+
         $user->save();
 
         // create token
@@ -129,7 +142,7 @@ class UserController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN'],
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN,
                             'nomi-token' => $token
                         ]);
     }
@@ -156,7 +169,7 @@ class UserController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN'],
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN,
                             'x-csrf-token' => $request->get('x-csrf-token')
                         ]);
     }
@@ -164,20 +177,97 @@ class UserController extends Controller
     public function show(Request $request)
     {
         $user = $request->auth;
+        return response()->json(array('avatar' => $user->avatar,
+                                      'displayname' => $user->displayname,
+                                      'username' => $user->username,
+                                      'email' => $user->email,
+                                      'gender' => $user->gender,
+                                      'age' => $user->age,
+                                      'mobile_no' => $user->mobile_no,
+                                      'rate_per_hour' => $user->rate_per_hour,
+                                      'city_id' => $user->city_id,
+                                      'place_id' => $user->place_id,
+                                      'height' => $user->height,
+                                      'weight' => $user->weight,
+                                      'language' => $user->language,
+                                      'nationality' => $user->nationality))
+                        ->withHeaders([
+                            'Access-Control-Allow-Credentials' => 'true',
+                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN,
+                            'x-csrf-token' => $request->get('x-csrf-token')
+                        ]);
+    }
+
+    public function upload_avatar(Request $request)
+    {
+        $user = $request->auth;
+
+        if ($request->file('avatar')) {
+            $filename = $request->file('avatar')->getClientOriginalName();;
+            $image = $request->file('avatar');
+            Flysystem::put($filename, File::get($request->file('avatar')));
+
+            $user->avatar = $filename;
+            $user->save();
+
+            return response()->json(array('URLID' => $user->url,
+                                          'Username' => $user->username,
+                                          'Avatar' => $user->avatar,
+                                          'Gender' => $user->gender,
+                                          'Age' => $user->age))
+                            ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN,
+                                'x-csrf-token' => $request->get('x-csrf-token')
+                            ]);
+        }
+    }
+
+    public function remove_avatar(Request $request)
+    {
+        $user = $request->auth;
+
+        Flysystem::delete($user->avatar);
+
+        $user->avatar = '';
+        $user->save();
+
         return response()->json(array('URLID' => $user->url,
                                       'Username' => $user->username,
-                                      'Avatar' => '',
+                                      'Avatar' => $user->avatar,
                                       'Gender' => $user->gender,
                                       'Age' => $user->age))
                         ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN'],
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN,
                             'x-csrf-token' => $request->get('x-csrf-token')
                         ]);
     }
    
+    public function show_avatar(Request $request)
+    {
+        $user = $request->auth;
+        $path = storage_path('files').'/'.$user->avatar;
+
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = response()->make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    }
+
     public function update(Request $request, $id)
     { 
         $user = User::find($id);
@@ -195,17 +285,8 @@ class UserController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN
                         ]);
     }
-
-    /*
-    public function destroy($id)
-    {
-        $user = User::find($id);
-        $user->delete();
-        return response()->json('user deleted successfully');
-    }
-    */
 
 }

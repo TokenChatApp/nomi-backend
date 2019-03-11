@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Settings;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
@@ -21,7 +23,7 @@ class AuthController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN
                         ]);
     }
 
@@ -32,7 +34,7 @@ class AuthController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN
                         ]);
     }
 
@@ -50,7 +52,7 @@ class AuthController extends Controller
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                                 'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
                             ]);
         }
 
@@ -62,7 +64,7 @@ class AuthController extends Controller
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                                 'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
                             ]);
         }
         else if ($user != null && !Hash::check($request->password, $user->password)) {
@@ -72,7 +74,7 @@ class AuthController extends Controller
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                                 'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
                             ]);
         }
 
@@ -97,7 +99,7 @@ class AuthController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN'],
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN,
                             'nomi-token' => $token
                         ]);
     }
@@ -113,7 +115,7 @@ class AuthController extends Controller
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
                             'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN']
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN
                         ]);
     }
 

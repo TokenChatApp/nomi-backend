@@ -23,12 +23,12 @@ class JwtMiddleware
         try {
             $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
         } 
-        catch(ExpiredException $e) {
+        catch (ExpiredException $e) {
             return response()->json([
                 'error' => 'Provided token is expired.'
             ], 400);
         } 
-        catch(Exception $e) {
+        catch (Exception $e) {
             return response()->json([
                 'error' => 'An error while decoding token.'
             ], 400);

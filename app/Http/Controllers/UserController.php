@@ -45,28 +45,28 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
            'username' => 'required|max:100|unique:users,username',
-           'displayName' => 'required|max:100',
+           'display_name' => 'required|max:100',
            'age' => 'required|numeric',
-           'mobileNumber' => 'required|max:20',
+           'mobile_no' => 'required|max:20',
            'email' => 'required|max:200|email|unique:users,email',
            'password' => 'required|string|max:100',
            'gender' => 'required|max:10'
         ]);
 
-        if ($request->gender == 'Women') {
+        if ($request->gender == 'F') {
             $validator = Validator::make($request->all(), [
                 'username' => 'required|max:100|unique:users,username',
-                'displayName' => 'required|max:100',
+                'display_name' => 'required|max:100',
                 'age' => 'required|numeric',
-                'mobileNumber' => 'required|max:20',
+                'mobile_no' => 'required|max:20',
                 'email' => 'required|max:200|email|unique:users,email',
                 'password' => 'required|string|max:100',
                 'gender' => 'required|max:10',
-                'cityId' => 'numeric',
-                'placeId' => 'numeric',
+                'city_id' => 'numeric',
+                'place_id' => 'numeric',
                 'height' => 'numeric',
                 'weight' => 'numeric',
-                'spokenLanguage' => '',
+                'language' => '',
                 'nationality' => ''
             ]);
         }
@@ -86,27 +86,30 @@ class UserController extends Controller
         $user = new User;
         $user->url = str_random(32);
         $user->username = $request->username;
-        $user->displayname = $request->displayName;
+        $user->display_name = $request->display_name;
         $user->password = Hash::make($request->password);
         $user->email = $request->email;
         $user->gender = $request->gender;
         $user->age = $request->age;
-        $user->mobile_no = $request->mobileNumber;
-        $user->rate_per_hour = 0;
+        $user->mobile_no = $request->mobile_no;
+        $user->rate_level = 0;
+        $user->rate_per_session = 0;
         $user->height = 0;
         $user->weight = 0;
         $user->language = '';
         $user->nationality = '';
+        $user->referral = '';
         $user->status = 1;
         $user->last_logged_in = Carbon::now('Asia/Singapore')->toDateTimeString();
 
-        if ($request->gender == 'Women') {
-            $user->rate_per_hour = 5000; 
-            $user->city_id = $request->cityId;
-            $user->place_id = $request->placeId;
+        if ($request->gender == 'F') {
+            $user->rate_level = 1;
+            $user->rate_per_session = 10000; 
+            $user->city_id = $request->city_id;
+            $user->place_id = $request->place_id;
             $user->height = $request->height;
             $user->weight = $request->weight;
-            $user->language = $request->spokenLanguage;
+            $user->language = $request->language;
             $user->nationality = $request->nationality;
         }
 
@@ -151,16 +154,16 @@ class UserController extends Controller
     {
         $users = array();
 
-        if ($request->placeId) {
-            $users = User::select('url','avatar','displayname','username','age','rate_per_hour','height','weight','language','nationality')
-                        ->where('place_id', $request->placeId)
-                        ->where('gender', 'Women')
+        if ($request->place_id) {
+            $users = User::select('url','avatar','display_name','username','age','rate_per_session','height','weight','language','nationality')
+                        ->where('place_id', $request->place_id)
+                        ->where('gender', 'F')
                         ->get();
         }
-        if ($request->cityId) {
-            $users = User::select('url','avatar','displayname','username','age','rate_per_hour','height','weight','language','nationality')
-                        ->where('city_id', $request->cityId)
-                        ->where('gender', 'Women')
+        if ($request->city_id) {
+            $users = User::select('url','avatar','display_name','username','age','rate_per_session','height','weight','language','nationality')
+                        ->where('city_id', $request->city_id)
+                        ->where('gender', 'F')
                         ->get();
         }
         
@@ -178,13 +181,14 @@ class UserController extends Controller
     {
         $user = $request->auth;
         return response()->json(array('avatar' => $user->avatar,
-                                      'displayname' => $user->displayname,
+                                      'display_name' => $user->display_name,
                                       'username' => $user->username,
                                       'email' => $user->email,
                                       'gender' => $user->gender,
                                       'age' => $user->age,
                                       'mobile_no' => $user->mobile_no,
-                                      'rate_per_hour' => $user->rate_per_hour,
+                                      'rate_level' => $user->rate_level,
+                                      'rate_per_session' => $user->rate_per_session,
                                       'city_id' => $user->city_id,
                                       'place_id' => $user->place_id,
                                       'height' => $user->height,
@@ -268,15 +272,32 @@ class UserController extends Controller
         return $response;
     }
 
+    public function fetch_avatar(Request $request)
+    {
+        $path = storage_path('files').'/'.$request->avatar;
+
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = response()->make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    }
+
     public function update(Request $request, $id)
     { 
         $user = User::find($id);
 
-        if ($request->placeId) {
-            $user->place_id = $request->placeId;
+        if ($request->place_id) {
+            $user->place_id = $request->place_id;
         }
-        if ($request->cityId) {
-            $user->city_id = $request->cityId;
+        if ($request->city_id) {
+            $user->city_id = $request->city_id;
         }
 
         $user->save();

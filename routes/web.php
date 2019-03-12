@@ -30,13 +30,20 @@ $router->group(['prefix' => 'api/v1/'], function() use($router) {
 	$router->options('auth/logout', 'AuthController@init');
 
 	$router->options('profile/info', 'UserController@init');
-	$router->options('profile/search', 'UserController@search');
-	$router->options('profile/upload_avatar', 'UserController@upload_avatar');
-	$router->options('profile/remove_avatar', 'UserController@remove_avatar');
+	$router->options('profile/show_avatar', 'UserController@init');
+	$router->options('profile/fetch_avatar', 'UserController@init');
+	$router->options('profile/search', 'UserController@init');
+	$router->options('profile/upload_avatar', 'UserController@init');
+	$router->options('profile/remove_avatar', 'UserController@init');
 
 	$router->post('profile/search', 'UserController@search');
+	$router->post('profile/fetch_avatar', 'UserController@fetch_avatar');
 
 	$router->options('booking', 'BookingController@init');
+	$router->options('booking/show/{id}', 'BookingController@init');
+	$router->options('booking/retrieve', 'BookingController@init');
+	$router->options('booking/accept', 'BookingController@init');
+	$router->options('booking/confirm', 'BookingController@init');
 
 	$router->options('cities', 'CityController@init');
 	$router->get('cities', 'CityController@index');
@@ -55,6 +62,8 @@ $router->group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function() u
 	$router->post('profile/remove_avatar', 'UserController@remove_avatar');
 
 	$router->put('booking', 'BookingController@create');
-	$router->get('booking/retrieve/{type}', 'BookingController@search');
-	$router->get('booking/accept', 'BookingController@accept');
+	$router->get('booking/show/{id}', 'BookingController@show');
+	$router->get('booking/retrieve', 'BookingController@search');
+	$router->post('booking/accept', 'BookingController@accept');
+	$router->post('booking/confirm', 'BookingController@confirm');
 });

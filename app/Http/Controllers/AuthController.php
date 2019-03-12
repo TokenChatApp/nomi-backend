@@ -56,6 +56,24 @@ class AuthController extends Controller
                             ]);
         }
 
+        // try to authenticate with lol chat
+        /*
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('GET', 'https://api.github.com/repos/guzzle/guzzle');
+
+        echo $response->getStatusCode(); # 200
+        echo $response->getHeaderLine('content-type'); # 'application/json; charset=utf8'
+        echo $response->getBody(); # '{"id": 1420053, "name": "guzzle", ...}'
+
+        # Send an asynchronous request.
+        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://httpbin.org');
+        $promise = $client->sendAsync($request)->then(function ($response) {
+            echo 'I completed! ' . $response->getBody();
+        });
+
+        $promise->wait();
+        */
+
         $user = User::where('username', $request->username)->first();
         if ($user == null) {
             return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Username not found',
@@ -110,7 +128,7 @@ class AuthController extends Controller
         $user->token = '';
         $user->save();
 
-        return response()->make("", 200)
+        return response()->make(array('message' => 'Logout successfully.'), 200)
                         ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',

@@ -22,8 +22,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany('App\Booking', 'requestor_id', 'user_id');
     }
 
-    public function requests()
+    public function booking()
     {
-        return $this->hasMany('App\BookingItem', 'user_id', 'user_id');
+        return $this->belongsTo('App\BookingItem', 'user_id', 'user_id');
     }
 }

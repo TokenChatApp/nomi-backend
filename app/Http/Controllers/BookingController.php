@@ -61,8 +61,8 @@ class BookingController extends Controller
         $booking->requestor_id = $user->user_id;
         $booking->request_date = $strings[0];
         $booking->request_start_time = $strings[1];
-        $booking->request_end_time = date('H:i', strtotime('+2 hours'))$request->request_end_time;
-        $booking->request_total_fee = 0;
+        $booking->request_end_time = date('H:i', strtotime($request->request_date)+7200);
+        $booking->request_total_fee = 0;        
         $booking->save();
 
         $booking_id = $booking->request_id;

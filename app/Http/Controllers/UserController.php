@@ -259,8 +259,8 @@ class UserController extends Controller
         $user = $request->auth;
         $path = storage_path('files').'/'.$user->avatar;
 
-        if (!File::exists($path)) {
-            abort(404);
+        if ($user->avatar == null || $user->avatar = '' || !File::exists($path)) {
+            return;
         }
 
         $file = File::get($path);
@@ -276,8 +276,8 @@ class UserController extends Controller
     {
         $path = storage_path('files').'/'.$request->avatar;
 
-        if (!File::exists($path)) {
-            abort(404);
+        if ($request->avatar == null || $request->avatar = '' || !File::exists($path)) {
+            return;
         }
 
         $file = File::get($path);

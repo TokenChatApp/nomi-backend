@@ -122,6 +122,11 @@ class BookingController extends Controller
     public function search(Request $request)
     {
         $user = $request->auth;
+
+        // upload last action
+        $user->last_action = Carbon::now()->toDateTimeString();
+        $user->save();
+
         if ($user->gender == 'M') {
             $bookings = Booking::select('*')
                             ->with('users')

@@ -116,7 +116,7 @@ class AuthController extends Controller
         $token = JWT::encode($payload, env('JWT_SECRET'));
 
         $user->token = $token;
-        $user->last_logged_in = Carbon::now('Asia/Singapore')->toDateTimeString();
+        $user->last_logged_in = Carbon::now()->toDateTimeString();
         $user->save();
 
         // As you can see we are passing `JWT_SECRET` as the second parameter that will 

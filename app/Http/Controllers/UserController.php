@@ -100,7 +100,7 @@ class UserController extends Controller
         $user->nationality = '';
         $user->referral = '';
         $user->status = 1;
-        $user->last_logged_in = Carbon::now('Asia/Singapore')->toDateTimeString();
+        $user->last_logged_in = Carbon::now()->toDateTimeString();
 
         if ($request->gender == 'F') {
             $user->rate_level = 1;

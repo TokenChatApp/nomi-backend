@@ -54,36 +54,46 @@ class AuthController extends Controller
                                 'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
                                 'Access-Control-Allow-Origin' => Settings::ORIGIN
                             ]);
-        }
-
-        // try to authenticate with lol chat
-        /*
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', 'https://api.github.com/repos/guzzle/guzzle');
-
-        echo $response->getStatusCode(); # 200
-        echo $response->getHeaderLine('content-type'); # 'application/json; charset=utf8'
-        echo $response->getBody(); # '{"id": 1420053, "name": "guzzle", ...}'
-
-        # Send an asynchronous request.
-        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://httpbin.org');
-        $promise = $client->sendAsync($request)->then(function ($response) {
-            echo 'I completed! ' . $response->getBody();
-        });
-
-        $promise->wait();
-        */
+        } 
 
         $user = User::where('username', $request->username)->first();
         if ($user == null) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Username not found',
-                                          'errors' => array(), 'session' => false), 400)
-                             ->withHeaders([
-                                'Access-Control-Allow-Credentials' => 'true',
-                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => Settings::ORIGIN
-                            ]);
+            // try to authenticate with lol chat
+            $params = 'username='.$request->username.'&password='.$request->password;
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('GET', 'http://admin.tokenchatserver.com/api/user?'.$params, [
+                'headers' => [
+                    'Accept'     => 'application/json',
+                    'X-API-KEY'  => ['go8c8gwkwcc4sggg8wkog00ccwkgc404sk4s8okk']
+                ]
+            ]);
+            $payload = json_decode($response->getBody()->getContents());
+
+            // have body means login success
+            if ($payload != null && $payload->pin != '') {
+                // check for female account created
+                $user = User::where('username', $request->username)->first();
+                if ($user == null) {
+                    return response()->make(array('status' => false, 'errorMessage' => 'Nomi account not created yet.',
+                                                  'errors' => array(), 'needSignup' => true, 'session' => false), 400)
+                                     ->withHeaders([
+                                        'Access-Control-Allow-Credentials' => 'true',
+                                        'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                        'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                        'Access-Control-Allow-Origin' => Settings::ORIGIN
+                                    ]);
+                }
+            }
+            else {
+                return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Username not found',
+                                              'errors' => array(), 'session' => false), 400)
+                                 ->withHeaders([
+                                    'Access-Control-Allow-Credentials' => 'true',
+                                    'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                    'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                    'Access-Control-Allow-Origin' => Settings::ORIGIN
+                                ]);
+            }
         }
         else if ($user != null && !Hash::check($request->password, $user->password)) {
             return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Password is incorrect',

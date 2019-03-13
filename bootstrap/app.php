@@ -25,6 +25,10 @@ $app->withFacades();
 
 $app->withEloquent();
 
+if (!class_exists('Stripe')) {
+    class_alias('Cartalyst\Stripe\Laravel\Facades\Stripe', 'Stripe');
+}
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings
@@ -90,6 +94,7 @@ $app->routeMiddleware([
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
 $app->register(Spatie\HttpLogger\HttpLoggerServiceProvider::class);
+$app->register(Cartalyst\Stripe\Laravel\StripeServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

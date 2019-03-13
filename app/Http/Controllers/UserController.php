@@ -155,13 +155,13 @@ class UserController extends Controller
         $users = array();
 
         if ($request->place_id) {
-            $users = User::select('url','avatar','display_name','username','age','rate_per_session','height','weight','language','nationality')
+            $users = User::select('user_id', 'url','avatar','display_name','username','age','rate_per_session','height','weight','language','nationality')
                         ->where('place_id', $request->place_id)
                         ->where('gender', 'F')
                         ->get();
         }
         if ($request->city_id) {
-            $users = User::select('url','avatar','display_name','username','age','rate_per_session','height','weight','language','nationality')
+            $users = User::select('user_id', 'url','avatar','display_name','username','age','rate_per_session','height','weight','language','nationality')
                         ->where('city_id', $request->city_id)
                         ->where('gender', 'F')
                         ->get();
@@ -267,7 +267,7 @@ class UserController extends Controller
         $type = File::mimeType($path);
 
         $response = response()->make($file, 200);
-        $response->header("Content-Type", $type);
+        $response->header('Content-Type', $type);
 
         return $response;
     }
@@ -284,14 +284,30 @@ class UserController extends Controller
         $type = File::mimeType($path);
 
         $response = response()->make($file, 200);
-        $response->header("Content-Type", $type);
+        $response->header('Content-Type', $type);
 
         return $response;
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     { 
-        $user = User::find($id);
+        $user = $request->auth;
+
+        $validator = Validator::make($request->all(), [
+           'place_id' => 'required|numeric',
+           'city_id' => 'required|numeric'
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->make(array('status' => false, 'errorMessage' => 'Unable to update location.',
+                                          'errors' => $validator->messages(), 'session' => false), 400)
+                             ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
+                            ]);
+        }
 
         if ($request->place_id) {
             $user->place_id = $request->place_id;
@@ -301,7 +317,11 @@ class UserController extends Controller
         }
 
         $user->save();
-        return response()->json($user)
+        return response()->json(array('URLID' => $user->url,
+                                      'Username' => $user->username,
+                                      'Avatar' => $user->avatar,
+                                      'Gender' => $user->gender,
+                                      'Age' => $user->age))
                          ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',

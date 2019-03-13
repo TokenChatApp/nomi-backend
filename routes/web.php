@@ -14,9 +14,24 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+/*
+$router->get('storage/{filename}', function ($filename)
+{
+	$path = storage_path('files').'/'.$files;
 
+    if ($request->avatar == null || $request->avatar = '' || !File::exists($path)) {
+        return;
+    }
 
+    $file = File::get($path);
+    $type = File::mimeType($path);
 
+    $response = response()->make($file, 200);
+    $response->header('Content-Type', $type);
+
+    return $response;
+});
+*/
 $router->group(['prefix' => 'api/v1/'], function() use($router) {
 	$router->options('auth/csrf-token', 'AuthController@init');
 	$router->get('auth/csrf-token', 'AuthController@index');
@@ -30,6 +45,7 @@ $router->group(['prefix' => 'api/v1/'], function() use($router) {
 	$router->options('auth/logout', 'AuthController@init');
 
 	$router->options('profile/info', 'UserController@init');
+	$router->options('profile/update', 'UserController@init');
 	$router->options('profile/show_avatar', 'UserController@init');
 	$router->options('profile/fetch_avatar', 'UserController@init');
 	$router->options('profile/search', 'UserController@init');
@@ -59,6 +75,7 @@ $router->group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function() u
 	$router->post('auth/logout', 'AuthController@logout');
 
 	$router->get('profile/info', 'UserController@show');
+	$router->post('profile/update', 'UserController@update');
 	$router->get('profile/show_avatar', 'UserController@show_avatar');
 	$router->post('profile/upload_avatar', 'UserController@upload_avatar');
 	$router->post('profile/remove_avatar', 'UserController@remove_avatar');

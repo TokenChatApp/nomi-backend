@@ -26,6 +26,6 @@ class BookingItem extends Model implements AuthenticatableContract, Authorizable
 
     public function request_user()
     {
-        return $this->hasOne('App\User', 'user_id', 'user_id')->select('avatar');
+        return $this->hasOne('App\User', 'user_id', 'user_id');
     }
 }

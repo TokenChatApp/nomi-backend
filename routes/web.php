@@ -51,6 +51,8 @@ $router->group(['prefix' => 'api/v1/'], function() use($router) {
 	$router->options('places', 'PlaceController@init');
 	$router->get('places', 'PlaceController@index');
 	$router->get('places/{id}', 'PlaceController@show');
+
+	$router->get('notification', 'NotifyController@send');
 });
 
 $router->group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function() use($router) {	

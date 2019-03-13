@@ -1138,8 +1138,8 @@
     },
     {
         "name": "illuminate/contracts",
-        "version": "v5.8.3",
-        "version_normalized": "5.8.3.0",
+        "version": "v5.8.4",
+        "version_normalized": "5.8.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/illuminate/contracts.git",
@@ -1342,8 +1342,8 @@
     },
     {
         "name": "illuminate/filesystem",
-        "version": "v5.8.3",
-        "version_normalized": "5.8.3.0",
+        "version": "v5.8.4",
+        "version_normalized": "5.8.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/illuminate/filesystem.git",
@@ -1442,8 +1442,8 @@
     },
     {
         "name": "illuminate/http",
-        "version": "v5.8.3",
-        "version_normalized": "5.8.3.0",
+        "version": "v5.8.4",
+        "version_normalized": "5.8.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/illuminate/http.git",
@@ -1692,8 +1692,8 @@
     },
     {
         "name": "illuminate/session",
-        "version": "v5.8.3",
-        "version_normalized": "5.8.3.0",
+        "version": "v5.8.4",
+        "version_normalized": "5.8.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/illuminate/session.git",
@@ -1745,17 +1745,17 @@
     },
     {
         "name": "illuminate/support",
-        "version": "v5.8.3",
-        "version_normalized": "5.8.3.0",
+        "version": "v5.8.4",
+        "version_normalized": "5.8.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/illuminate/support.git",
-            "reference": "0f0291d1bc2f036af3fceb8e46900b58812533c4"
+            "reference": "07062f5750872a31e086ff37a7c50ac18b8c417c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/illuminate/support/zipball/0f0291d1bc2f036af3fceb8e46900b58812533c4",
-            "reference": "0f0291d1bc2f036af3fceb8e46900b58812533c4",
+            "url": "https://api.github.com/repos/illuminate/support/zipball/07062f5750872a31e086ff37a7c50ac18b8c417c",
+            "reference": "07062f5750872a31e086ff37a7c50ac18b8c417c",
             "shasum": ""
         },
         "require": {
@@ -1777,7 +1777,7 @@
             "symfony/var-dumper": "Required to use the dd function (^4.2).",
             "vlucas/phpdotenv": "Required to use the env helper (^3.3)."
         },
-        "time": "2019-03-05T13:38:58+00:00",
+        "time": "2019-03-12T13:17:00+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -4062,6 +4062,63 @@
         ],
         "description": "Library that helps with managing the version number of Git-hosted PHP projects",
         "homepage": "https://github.com/sebastianbergmann/version"
+    },
+    {
+        "name": "spatie/laravel-http-logger",
+        "version": "1.1.4",
+        "version_normalized": "1.1.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/spatie/laravel-http-logger.git",
+            "reference": "2e5c973280c7a3dfcd78c38233b3667f9441602e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/spatie/laravel-http-logger/zipball/2e5c973280c7a3dfcd78c38233b3667f9441602e",
+            "reference": "2e5c973280c7a3dfcd78c38233b3667f9441602e",
+            "shasum": ""
+        },
+        "require": {
+            "illuminate/support": "~5.6.0|~5.7.0|~5.8.0",
+            "php": "^7.1"
+        },
+        "require-dev": {
+            "orchestra/testbench": "~3.6.0|~3.7.0|~3.8.0",
+            "phpunit/phpunit": "^7.0"
+        },
+        "time": "2019-02-27T16:31:39+00:00",
+        "type": "library",
+        "extra": {
+            "laravel": {
+                "providers": [
+                    "Spatie\\HttpLogger\\HttpLoggerServiceProvider"
+                ]
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Spatie\\HttpLogger\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Brent Roose",
+                "email": "brent@spatie.be",
+                "homepage": "https://spatie.be",
+                "role": "Developer"
+            }
+        ],
+        "description": "A Laravel 5 package to log HTTP requests",
+        "homepage": "https://github.com/spatie/laravel-http-logger",
+        "keywords": [
+            "laravel-http-logger",
+            "spatie"
+        ]
     },
     {
         "name": "symfony/console",

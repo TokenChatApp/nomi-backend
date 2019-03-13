@@ -65,9 +65,14 @@ $app->singleton(
 // 	   'auth' => App\Http\Middleware\Authenticate::class,
 // ]);
 
+$app->middleware([
+	\Spatie\HttpLogger\Middlewares\HttpLogger::class
+]);
+
 $app->routeMiddleware([
 	'jwt.auth' => App\Http\Middleware\JwtMiddleware::class,
 ]);
+
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +89,7 @@ $app->routeMiddleware([
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(GrahamCampbell\Flysystem\FlysystemServiceProvider::class);
+$app->register(Spatie\HttpLogger\HttpLoggerServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

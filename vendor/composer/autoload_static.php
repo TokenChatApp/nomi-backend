@@ -46,6 +46,7 @@ class ComposerStaticInit6a232afeb245d9057e4f19721adfc26b
             'Symfony\\Component\\EventDispatcher\\' => 34,
             'Symfony\\Component\\Debug\\' => 24,
             'Symfony\\Component\\Console\\' => 26,
+            'Spatie\\HttpLogger\\' => 18,
         ),
         'P' => 
         array (
@@ -191,6 +192,10 @@ class ComposerStaticInit6a232afeb245d9057e4f19721adfc26b
         'Symfony\\Component\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'Spatie\\HttpLogger\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/spatie/laravel-http-logger/src',
         ),
         'Psr\\SimpleCache\\' => 
         array (
@@ -422,6 +427,7 @@ class ComposerStaticInit6a232afeb245d9057e4f19721adfc26b
         'App\\Http\\Controllers\\BookingController' => __DIR__ . '/../..' . '/app/Http/Controllers/BookingController.php',
         'App\\Http\\Controllers\\CityController' => __DIR__ . '/../..' . '/app/Http/Controllers/CityController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\NotifyController' => __DIR__ . '/../..' . '/app/Http/Controllers/NotifyController.php',
         'App\\Http\\Controllers\\PlaceController' => __DIR__ . '/../..' . '/app/Http/Controllers/PlaceController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -2710,6 +2716,12 @@ class ComposerStaticInit6a232afeb245d9057e4f19721adfc26b
         'SebastianBergmann\\Timer\\RuntimeException' => __DIR__ . '/..' . '/phpunit/php-timer/src/RuntimeException.php',
         'SebastianBergmann\\Timer\\Timer' => __DIR__ . '/..' . '/phpunit/php-timer/src/Timer.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
+        'Spatie\\HttpLogger\\DefaultLogWriter' => __DIR__ . '/..' . '/spatie/laravel-http-logger/src/DefaultLogWriter.php',
+        'Spatie\\HttpLogger\\HttpLoggerServiceProvider' => __DIR__ . '/..' . '/spatie/laravel-http-logger/src/HttpLoggerServiceProvider.php',
+        'Spatie\\HttpLogger\\LogNonGetRequests' => __DIR__ . '/..' . '/spatie/laravel-http-logger/src/LogNonGetRequests.php',
+        'Spatie\\HttpLogger\\LogProfile' => __DIR__ . '/..' . '/spatie/laravel-http-logger/src/LogProfile.php',
+        'Spatie\\HttpLogger\\LogWriter' => __DIR__ . '/..' . '/spatie/laravel-http-logger/src/LogWriter.php',
+        'Spatie\\HttpLogger\\Middlewares\\HttpLogger' => __DIR__ . '/..' . '/spatie/laravel-http-logger/src/Middlewares/HttpLogger.php',
         'Symfony\\Component\\Console\\Application' => __DIR__ . '/..' . '/symfony/console/Application.php',
         'Symfony\\Component\\Console\\CommandLoader\\CommandLoaderInterface' => __DIR__ . '/..' . '/symfony/console/CommandLoader/CommandLoaderInterface.php',
         'Symfony\\Component\\Console\\CommandLoader\\ContainerCommandLoader' => __DIR__ . '/..' . '/symfony/console/CommandLoader/ContainerCommandLoader.php',

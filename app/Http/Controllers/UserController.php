@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 require '../vendor/autoload.php';
 
+use App\BookingItem;
 use App\Settings;
 use App\User;
 use Illuminate\Http\Request;
@@ -153,18 +154,68 @@ class UserController extends Controller
     public function search(Request $request)
     {
         $users = array();
+        $available_users = array();
 
         if ($request->place_id) {
-            $users = User::select('user_id', 'url','avatar','display_name','username','age','rate_per_session','height','weight','language','nationality')
+            $users = User::select('user_id', 'url','avatar','display_name','username','age','rate_level','rate_per_session','height','weight','language','nationality')
                         ->where('place_id', $request->place_id)
                         ->where('gender', 'F')
                         ->get();
         }
-        if ($request->city_id) {
-            $users = User::select('user_id', 'url','avatar','display_name','username','age','rate_per_session','height','weight','language','nationality')
+        else if ($request->city_id) {
+            $users = User::select('user_id', 'url','avatar','display_name','username','age','rate_level','rate_per_session','height','weight','language','nationality')
                         ->where('city_id', $request->city_id)
                         ->where('gender', 'F')
                         ->get();
+        }
+
+        if ($users != null) {
+            foreach ($users as $u) {
+                /*
+                $item = BookingItem::with(['booking' => function($query) {
+                                        $query->where('request_date', date('Y-m-d'))
+                                              ->where('request_start_time', '>=', date('H:i'))
+                                              ->where('request_end_time', '<=', date('H:i'))
+                                              ->where('is_confirmed', 1)
+                                              ->where('is_paid', 1);
+                                    }])
+                                    ->with('request_user')
+                                    ->where('is_accepted', 1)
+                                    ->where('is_selected', 1)
+                                    ->where('user_id', $u->user_id)
+                                    ->first();
+                
+                $item = BookingItem::with('booking')
+                                    ->where('is_accepted', 1)
+                                    ->where('is_selected', 1)
+                                    ->where('user_id', $u->user_id)
+                                    ->first();
+                echo strtotime($item->booking->request_date).'<br/>';
+                echo strtotime(date('Y-m-d')).'<br/>';
+                echo strtotime($item->booking->request_start_time).'<br/>';
+                echo strtotime(date('H:i')).'<br/>';
+                echo strtotime($item->booking->request_end_time).'<br/>';
+                echo strtotime(date('H:i')).'<br/>';
+                echo $item->booking->is_confirmed=='1'.'<br/>';
+                echo $item->booking->is_paid=='1'.'<br/>';
+
+                if (strtotime($item->booking->request_date) == strtotime(date('Y-m-d')) &&
+                    strtotime($item->booking->request_start_time) >= strtotime(date('H:i')) &&
+                    strtotime($item->booking->request_end_time) <= strtotime(date('H:i')) && 
+                    $item->booking->is_confirmed == 1 &&
+                    $item->booking->is_paid == 1) {
+                    // do not add
+                }
+                else {
+                    $available_users[] = $u;
+                }
+
+                if ($item == null) {
+                    $available_users[] = $u;
+                }
+                exit;
+                */
+            }
         }
         
         return response()->json($users)

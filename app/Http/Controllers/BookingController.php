@@ -330,7 +330,7 @@ class BookingController extends Controller
                                         ->where('request_id', $request->request_id)
                                         ->where('user_id', $id)
                                         ->first();
-                    $total_amount += $item->rate_per_session;
+                    $total_amount += $item->request_user->rate_per_session;
                 }
             }
 
@@ -342,11 +342,18 @@ class BookingController extends Controller
                     'source' => $request->stripe_token
                 ));
 
+                print_r(array(
+                    'customer' => $customer->id,
+                    'amount'   => $total_amount,
+                    'currency' => 'jpy',
+                    'description' => 'Booking '.$request->request_id
+                ));
+
                 $charge = Charge::create(array(
                     'customer' => $customer->id,
                     'amount'   => $total_amount,
                     'currency' => 'jpy',
-                    'description' => 'Booking '.$request->request_id,
+                    'description' => 'Booking '.$request->request_id
                 ));
 
                 if ($profileIds != NULL) {
@@ -363,6 +370,7 @@ class BookingController extends Controller
 
                 $booking->is_confirmed = 1;
                 $booking->is_paid = 1;
+                $booking->request_total_fee = $total_amount;
                 $booking->save();
                 
                 return response()->make(array('status' => true, 'message' => 'Booking confirmed successfully', 'session' => true), 200)

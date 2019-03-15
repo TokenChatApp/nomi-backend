@@ -46,6 +46,7 @@ $router->group(['prefix' => 'api/v1/'], function() use($router) {
 
 	$router->options('profile/info', 'UserController@init');
 	$router->options('profile/update', 'UserController@init');
+	$router->options('profile/update_intro', 'UserController@init');
 	$router->options('profile/show_avatar', 'UserController@init');
 	$router->options('profile/fetch_avatar', 'UserController@init');
 	$router->options('profile/search', 'UserController@init');
@@ -76,6 +77,7 @@ $router->group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function() u
 
 	$router->get('profile/info', 'UserController@show');
 	$router->post('profile/update', 'UserController@update');
+	$router->post('profile/update_intro', 'UserController@update_intro');
 	$router->get('profile/show_avatar', 'UserController@show_avatar');
 	$router->post('profile/upload_avatar', 'UserController@upload_avatar');
 	$router->post('profile/remove_avatar', 'UserController@remove_avatar');

@@ -153,72 +153,75 @@ class UserController extends Controller
    
     public function search(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+           'place_id' => 'required|numeric',
+           'city_id' => 'required|numeric',
+           'request_date' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->make(array('status' => false, 'errorMessage' => 'Unable to find available girls.',
+                                          'errors' => $validator->messages(), 'session' => false), 400)
+                             ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
+                            ]);
+        }
+
         $users = array();
         $available_users = array();
 
         if ($request->place_id) {
-            $users = User::select('user_id', 'url','avatar','display_name','username','age','rate_level','rate_per_session','height','weight','language','nationality')
+            $users = User::select('*')
                         ->where('place_id', $request->place_id)
                         ->where('gender', 'F')
                         ->get();
         }
         else if ($request->city_id) {
-            $users = User::select('user_id', 'url','avatar','display_name','username','age','rate_level','rate_per_session','height','weight','language','nationality')
+            $users = User::select('*')
                         ->where('city_id', $request->city_id)
                         ->where('gender', 'F')
                         ->get();
         }
 
+        $time = strtotime($request->request_date);
+        $start_time = date('Y-m-d H:i', strtotime('-30 minutes', $time));
+        $end_time = date('Y-m-d H:i', strtotime('+150 minutes', $time));
+
         if ($users != null) {
             foreach ($users as $u) {
-                /*
-                $item = BookingItem::with(['booking' => function($query) {
-                                        $query->where('request_date', date('Y-m-d'))
-                                              ->where('request_start_time', '>=', date('H:i'))
-                                              ->where('request_end_time', '<=', date('H:i'))
-                                              ->where('is_confirmed', 1)
-                                              ->where('is_paid', 1);
-                                    }])
+                $available = true;
+
+                $items = BookingItem::with('booking')
                                     ->with('request_user')
                                     ->where('is_accepted', 1)
                                     ->where('is_selected', 1)
                                     ->where('user_id', $u->user_id)
-                                    ->first();
+                                    ->get();
                 
-                $item = BookingItem::with('booking')
-                                    ->where('is_accepted', 1)
-                                    ->where('is_selected', 1)
-                                    ->where('user_id', $u->user_id)
-                                    ->first();
-                echo strtotime($item->booking->request_date).'<br/>';
-                echo strtotime(date('Y-m-d')).'<br/>';
-                echo strtotime($item->booking->request_start_time).'<br/>';
-                echo strtotime(date('H:i')).'<br/>';
-                echo strtotime($item->booking->request_end_time).'<br/>';
-                echo strtotime(date('H:i')).'<br/>';
-                echo $item->booking->is_confirmed=='1'.'<br/>';
-                echo $item->booking->is_paid=='1'.'<br/>';
+                if ($items != null) {
+                    foreach ($items as $i) {
+                        if ($i->booking->is_confirmed == 1 && 
+                            $i->booking->is_paid == 1 &&
+                            strtotime($i->booking->request_end_date.' '.$i->booking->request_end_time) > strtotime($start_time) &&
+                            strtotime($i->booking->request_date.' '.$i->booking->request_start_time) < strtotime($end_time)) {
+                            $available = false;
+                        }
+                    }
 
-                if (strtotime($item->booking->request_date) == strtotime(date('Y-m-d')) &&
-                    strtotime($item->booking->request_start_time) >= strtotime(date('H:i')) &&
-                    strtotime($item->booking->request_end_time) <= strtotime(date('H:i')) && 
-                    $item->booking->is_confirmed == 1 &&
-                    $item->booking->is_paid == 1) {
-                    // do not add
+                    if ($available) {
+                        $available_users[] = $u;
+                    }
                 }
                 else {
                     $available_users[] = $u;
                 }
-
-                if ($item == null) {
-                    $available_users[] = $u;
-                }
-                exit;
-                */
             }
         }
-        
-        return response()->json($users)
+
+        return response()->json($available_users)
                         ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -365,6 +368,43 @@ class UserController extends Controller
         }
         if ($request->city_id) {
             $user->city_id = $request->city_id;
+        }
+
+        $user->save();
+        return response()->json(array('URLID' => $user->url,
+                                      'Username' => $user->username,
+                                      'Avatar' => $user->avatar,
+                                      'Gender' => $user->gender,
+                                      'Age' => $user->age))
+                         ->withHeaders([
+                            'Access-Control-Allow-Credentials' => 'true',
+                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN
+                        ]);
+    }
+
+    public function update_intro(Request $request)
+    { 
+        $user = $request->auth;
+
+        $validator = Validator::make($request->all(), [
+           'intro' => 'required'
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->make(array('status' => false, 'errorMessage' => 'Unable to update intro.',
+                                          'errors' => $validator->messages(), 'session' => false), 400)
+                             ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
+                            ]);
+        }
+
+        if ($request->intro) {
+            $user->intro = $request->intro;
         }
 
         $user->save();

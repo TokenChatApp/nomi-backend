@@ -13,6 +13,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use Authenticatable, Authorizable;
 
     protected $primaryKey = 'user_id';
+    protected $hidden = array('email', 'password', 'mobile_no', 'referral', 'token', 'status', 'user_date_added', 
+                              'user_date_updated', 'last_logged_in', 'user_action', 'user_notified');
 
     const CREATED_AT = 'user_date_added';
     const UPDATED_AT = 'user_date_updated';

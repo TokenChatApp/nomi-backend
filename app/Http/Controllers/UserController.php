@@ -68,7 +68,8 @@ class UserController extends Controller
                 'height' => 'numeric',
                 'weight' => 'numeric',
                 'language' => '',
-                'nationality' => ''
+                'nationality' => '',
+                'intro' => 'required'
             ]);
         }
         
@@ -248,7 +249,8 @@ class UserController extends Controller
                                       'height' => $user->height,
                                       'weight' => $user->weight,
                                       'language' => $user->language,
-                                      'nationality' => $user->nationality))
+                                      'nationality' => $user->nationality,
+                                      'intro' => $user->intro))
                         ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',

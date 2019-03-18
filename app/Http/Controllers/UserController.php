@@ -45,7 +45,7 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'username' => 'required|max:100|unique:users,username',
+           'username' => 'required|max:100',
            'display_name' => 'required|max:100',
            'age' => 'required|numeric',
            'mobile_no' => 'required|max:20',
@@ -56,7 +56,7 @@ class UserController extends Controller
 
         if ($request->gender == 'F') {
             $validator = Validator::make($request->all(), [
-                'username' => 'required|max:100|unique:users,username',
+                'username' => 'required|max:100',
                 'display_name' => 'required|max:100',
                 'age' => 'required|numeric',
                 'mobile_no' => 'required|max:20',
@@ -86,6 +86,7 @@ class UserController extends Controller
 
         if ($request->gender == 'M') {
             // check with lol chat with username
+            /*
             $params = 'username='.$request->username.'&password='.$request->password;
             $client = new \GuzzleHttp\Client();
             $response = $client->request('GET', 'http://admin.tokenchatserver.com/api/user?'.$params, [
@@ -98,6 +99,22 @@ class UserController extends Controller
 
             // have body means login success
             if ($payload != null && $payload->pin != '') {
+                return response()->make(array('status' => false, 'errorMessage' => 'Unable to signup. Username already exists.',
+                                              'errors' => $validator->messages(), 'session' => false), 400)
+                                 ->withHeaders([
+                                    'Access-Control-Allow-Credentials' => 'true',
+                                    'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                    'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                    'Access-Control-Allow-Origin' => Settings::ORIGIN
+                                ]);
+            }
+            */
+            $users = User::select('*')
+                        ->where('username', $request->username)
+                        ->where('gender', 'M')
+                        ->get();
+            
+            if ($users != null && sizeof($users) > 0) {
                 return response()->make(array('status' => false, 'errorMessage' => 'Unable to signup. Username already exists.',
                                               'errors' => $validator->messages(), 'session' => false), 400)
                                  ->withHeaders([

@@ -84,6 +84,31 @@ class UserController extends Controller
                             ]);
         }
 
+        if ($request->gender == 'M') {
+            // check with lol chat with username
+            $params = 'username='.$request->username.'&password='.$request->password;
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('GET', 'http://admin.tokenchatserver.com/api/user?'.$params, [
+                'headers' => [
+                    'Accept'     => 'application/json',
+                    'X-API-KEY'  => ['go8c8gwkwcc4sggg8wkog00ccwkgc404sk4s8okk']
+                ]
+            ]);
+            $payload = json_decode($response->getBody()->getContents());
+
+            // have body means login success
+            if ($payload != null && $payload->pin != '') {
+                return response()->make(array('status' => false, 'errorMessage' => 'Unable to signup. Username already exists.',
+                                              'errors' => $validator->messages(), 'session' => false), 400)
+                                 ->withHeaders([
+                                    'Access-Control-Allow-Credentials' => 'true',
+                                    'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                    'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                    'Access-Control-Allow-Origin' => Settings::ORIGIN
+                                ]);
+            }
+        }
+
         // create user record
         $user = new User;
         $user->url = str_random(32);

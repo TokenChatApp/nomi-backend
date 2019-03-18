@@ -14,24 +14,7 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
-/*
-$router->get('storage/{filename}', function ($filename)
-{
-	$path = storage_path('files').'/'.$files;
 
-    if ($request->avatar == null || $request->avatar = '' || !File::exists($path)) {
-        return;
-    }
-
-    $file = File::get($path);
-    $type = File::mimeType($path);
-
-    $response = response()->make($file, 200);
-    $response->header('Content-Type', $type);
-
-    return $response;
-});
-*/
 $router->group(['prefix' => 'api/v1/'], function() use($router) {
 	$router->options('auth/csrf-token', 'AuthController@init');
 	$router->get('auth/csrf-token', 'AuthController@index');

@@ -358,6 +358,7 @@ class BookingController extends Controller
                     'description' => 'Booking '.$request->request_id
                 ));
 
+                $profiles = array();
                 if ($profileIds != NULL) {
                     foreach ($profileIds as $id) {                    
                         $item = BookingItem::with('booking')
@@ -367,6 +368,8 @@ class BookingController extends Controller
                                             ->first();
                         $item->is_selected = 1;
                         $item->save();
+
+                        $profiles[] = $item;
                     }
                 }
 
@@ -375,7 +378,7 @@ class BookingController extends Controller
                 $booking->request_total_fee = $total_amount;
                 $booking->save();
                 
-                return response()->make(array('status' => true, 'message' => 'Booking confirmed successfully', 'session' => true), 200)
+                return response()->make(array('status' => true, 'message' => 'Booking confirmed successfully', 'session' => true, 'profiles' => $profiles), 200)
                                  ->withHeaders([
                                     'Access-Control-Allow-Credentials' => 'true',
                                     'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',

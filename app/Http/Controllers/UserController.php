@@ -51,7 +51,8 @@ class UserController extends Controller
            'mobile_no' => 'required|max:20',
            'email' => 'required|max:200|email|unique:users,email',
            'password' => 'required|string|max:100',
-           'gender' => 'required|max:10'
+           'gender' => 'required|max:10',
+           'referral' => 'required|exists:users,username'
         ]);
 
         if ($request->gender == 'F') {
@@ -69,7 +70,8 @@ class UserController extends Controller
                 'weight' => 'numeric',
                 'language' => '',
                 'nationality' => '',
-                'intro' => 'required'
+                'intro' => 'required',
+                'referral' => 'required|exists:users,username'
             ]);
         }
         
@@ -115,8 +117,8 @@ class UserController extends Controller
                         ->get();
             
             if ($users != null && sizeof($users) > 0) {
-                return response()->make(array('status' => false, 'errorMessage' => 'Unable to signup. Username already exists.',
-                                              'errors' => $validator->messages(), 'session' => false), 400)
+                return response()->make(array('status' => false, 'errorMessage' => 'Unable to signup.',
+                                              'errors' => array('username' => array('Username already exists.')), 'session' => false), 400)
                                  ->withHeaders([
                                     'Access-Control-Allow-Credentials' => 'true',
                                     'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -142,7 +144,7 @@ class UserController extends Controller
         $user->weight = 0;
         $user->language = '';
         $user->nationality = '';
-        $user->referral = '';
+        $user->referral = $request->referral;
         $user->status = 1;
         $user->last_logged_in = Carbon::now()->toDateTimeString();
 

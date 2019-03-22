@@ -73,7 +73,7 @@ class UserController extends Controller
                 'language' => '',
                 'nationality' => '',
                 'intro' => 'required',
-                'referral' => 'required|exists:users,username'
+                'referral' => 'exists:users,username'
             ]);
         }
         

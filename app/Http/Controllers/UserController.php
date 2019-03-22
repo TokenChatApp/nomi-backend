@@ -7,10 +7,12 @@ require '../vendor/autoload.php';
 use App\BookingItem;
 use App\Settings;
 use App\User;
+use App\Mail\SignupEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
@@ -52,7 +54,7 @@ class UserController extends Controller
            'email' => 'required|max:200|email|unique:users,email',
            'password' => 'required|string|max:100',
            'gender' => 'required|max:10',
-           'referral' => 'required|exists:users,username'
+           'referral' => 'exists:users,username'
         ]);
 
         if ($request->gender == 'F') {
@@ -182,6 +184,10 @@ class UserController extends Controller
         $user->token = $token;
 
         $user->save();
+
+        if ($request->gender == 'M') {
+            Mail::to($user->email)->send(new SignupEmail($user));
+        }
         
         // As you can see we are passing `JWT_SECRET` as the second parameter that will 
         // be used to decode the token in the future.

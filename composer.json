@@ -10,6 +10,7 @@
         "firebase/php-jwt": "^5.0",
         "graham-campbell/flysystem": "^5.2",
         "guzzlehttp/guzzle": "^6.3",
+        "illuminate/mail": "^5.8",
         "laravel/lumen-framework": "5.8.*",
         "nesbot/carbon": "^2.14",
         "spatie/laravel-http-logger": "^1.1",

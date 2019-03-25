@@ -18,7 +18,7 @@ return [
     'error_profile_remove_photo_denied' => '写真を削除する権利がありません。',
     'error_profile_upload_photo' => '写真はアップロードされていません。',
 
-    'success_profile_upload_photo' => '写真を削除しました。',
+    'success_profile_remove_photo' => '写真を削除しました。',
 
     'error_profile_search_available' => '女性にマッチすることができません。', 
 

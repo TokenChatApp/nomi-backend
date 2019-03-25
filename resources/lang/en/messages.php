@@ -18,7 +18,7 @@ return [
     'error_profile_remove_photo_denied' => 'Unable to remove photo. You are not authorized.',
     'error_profile_upload_photo' => 'No photos uploaded.',
 
-    'success_profile_upload_photo' => 'Photo removed.',
+    'success_profile_remove_photo' => 'Photo removed.',
 
     'error_profile_search_available' => 'Unable to find available girls.', 
 

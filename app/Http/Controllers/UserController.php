@@ -531,7 +531,7 @@ class UserController extends Controller
             }
             Photo::find($id)->delete();
 
-            return response()->make(array('status' => true, 'message' => __('messages.success_profile_upload_photo'),
+            return response()->make(array('status' => true, 'message' => __('messages.success_profile_remove_photo'),
                                           'errors' => array(), 'session' => true), 200)
                             ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',

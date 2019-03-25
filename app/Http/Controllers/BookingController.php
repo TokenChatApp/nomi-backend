@@ -58,7 +58,7 @@ class BookingController extends Controller
         $strings = explode(" ", $request->request_date);
 
         if ($validator->fails() || sizeof($strings) != 2) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to create booking.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_booking_create'),
                                           'errors' => $validator->messages(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -97,7 +97,7 @@ class BookingController extends Controller
             }
         }
         
-        return response()->make(array('status' => true, 'message' => 'Booking created successfully.', 'session' => true), 200)
+        return response()->make(array('status' => true, 'message' => __('messages.success_booking_create'), 'session' => true), 200)
                          ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -128,7 +128,7 @@ class BookingController extends Controller
                             ]);
         }
         else {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to view booking. You are not authorized.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_booking_view'),
                                           'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -279,7 +279,7 @@ class BookingController extends Controller
         ], [], $attributes);
 
         if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to accept booking.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_booking_accept'),
                                           'errors' => $validator->messages(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -298,7 +298,7 @@ class BookingController extends Controller
             $booking->is_accepted = $request->accepted;
             $booking->save();
             
-            return response()->make(array('status' => true, 'message' => 'Booking updated successfully.', 'session' => true), 200)
+            return response()->make(array('status' => true, 'message' => __('messages.success_booking_updated'), 'session' => true), 200)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -307,7 +307,7 @@ class BookingController extends Controller
                             ]);
         }
         else {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to find booking.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_booking_fetch'),
                                           'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -335,7 +335,7 @@ class BookingController extends Controller
         ], [], $attributes);
 
         if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to confirm booking.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_booking_confirm'),
                                           'errors' => $validator->messages(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -396,7 +396,7 @@ class BookingController extends Controller
                 $booking->request_total_fee = $total_amount;
                 $booking->save();
                 
-                return response()->make(array('status' => true, 'message' => 'Booking confirmed successfully.', 'session' => true, 'profiles' => $profiles), 200)
+                return response()->make(array('status' => true, 'message' => __('messages.success_booking_confirmed'), 'session' => true, 'profiles' => $profiles), 200)
                                  ->withHeaders([
                                     'Access-Control-Allow-Credentials' => 'true',
                                     'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -409,7 +409,7 @@ class BookingController extends Controller
             }
         }
         else {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to find booking.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_booking_fetch'),
                                           'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',

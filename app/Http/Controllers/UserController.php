@@ -149,7 +149,7 @@ class UserController extends Controller
                         ->get();
             
             if ($users != null && sizeof($users) > 0) {
-                return response()->make(array('status' => false, 'errorMessage' => 'Unable to signup.',
+                return response()->make(array('status' => false, 'errorMessage' => __('messages.error_signup'),
                                               'errors' => array('username' => array('Username already exists.')), 'session' => false), 400)
                                  ->withHeaders([
                                     'Access-Control-Allow-Credentials' => 'true',
@@ -262,7 +262,7 @@ class UserController extends Controller
         ], [], $attributes);
         
         if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to update location.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_update_location'),
                                           'errors' => $validator->messages(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -302,7 +302,7 @@ class UserController extends Controller
         ], [], $attributes);
         
         if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to update intro.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_update_intro'),
                                           'errors' => $validator->messages(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -341,7 +341,7 @@ class UserController extends Controller
         ], [], $attributes);
 
         if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to find available girls.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_search_available'),
                                           'errors' => $validator->messages(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -462,7 +462,7 @@ class UserController extends Controller
                         ]);
         }        
 
-        return response()->make(array('status' => false, 'errorMessage' => 'There is no avatar to be removed.',
+        return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_remove_avatar_none'),
                                       'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -498,7 +498,7 @@ class UserController extends Controller
                             ]);
         }
         else {
-            return response()->make(array('status' => false, 'errorMessage' => 'No photos uploaded.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_upload_photo'),
                                           'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -515,7 +515,7 @@ class UserController extends Controller
         $photo = Photo::find($id);
 
         if ($photo == null) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to remove photo. Photo does not exist.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_remove_photo_missing'),
                                           'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -531,7 +531,7 @@ class UserController extends Controller
             }
             Photo::find($id)->delete();
 
-            return response()->make(array('status' => true, 'message' => 'Photo removed.',
+            return response()->make(array('status' => true, 'message' => __('messages.success_profile_upload_photo'),
                                           'errors' => array(), 'session' => true), 200)
                             ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -542,7 +542,7 @@ class UserController extends Controller
                             ]);
         }
         else {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to remove photo. You are not authorized.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_remove_photo_denied'),
                                           'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',

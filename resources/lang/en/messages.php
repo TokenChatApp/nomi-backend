@@ -14,7 +14,7 @@ return [
     'error_profile_update_location' => 'Unable to update location.',
     'error_profile_update_intro' => 'Unable to update intro.',
     'error_profile_remove_avatar_none' => 'There is no avatar to be removed.',
-    'error_profile_remove_avatar_missing' => 'Unable to remove photo. Photo does not exist.',
+    'error_profile_remove_photo_missing' => 'Unable to remove photo. Photo does not exist.',
     'error_profile_remove_photo_denied' => 'Unable to remove photo. You are not authorized.',
     'error_profile_upload_photo' => 'No photos uploaded.',
 

@@ -51,7 +51,7 @@ class AuthController extends Controller
         ], [], $attributes);
         
         if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to login.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_login'),
                                           'errors' => $validator->messages(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -79,7 +79,7 @@ class AuthController extends Controller
                 // check for female account created
                 $user = User::where('username', $request->username)->first();
                 if ($user == null) {
-                    return response()->make(array('status' => false, 'errorMessage' => 'Nomi account not created yet.',
+                    return response()->make(array('status' => false, 'errorMessage' => __('messages.error_login_account_not_created'),
                                                   'errors' => array(), 'needSignup' => true, 'session' => false), 400)
                                      ->withHeaders([
                                         'Access-Control-Allow-Credentials' => 'true',
@@ -90,7 +90,7 @@ class AuthController extends Controller
                 }
             }
             else {
-                return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Username not found.',
+                return response()->make(array('status' => false, 'errorMessage' => __('messages.error_login_username_not_found'),
                                               'errors' => array(), 'session' => false), 400)
                                  ->withHeaders([
                                     'Access-Control-Allow-Credentials' => 'true',
@@ -101,7 +101,7 @@ class AuthController extends Controller
             }
         }
         else if ($user != null && !Hash::check($request->password, $user->password)) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Password is incorrect.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_login_password_incorrect'),
                                           'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -143,7 +143,7 @@ class AuthController extends Controller
         $user->token = '';
         $user->save();
 
-        return response()->make(array('message' => 'Logout successfully.'), 200)
+        return response()->make(array('message' => __('messages.success_logout')), 200)
                         ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',

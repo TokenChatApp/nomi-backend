@@ -19,6 +19,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     const CREATED_AT = 'user_date_added';
     const UPDATED_AT = 'user_date_updated';
 
+    public function photos()
+    {
+        return $this->hasMany('App\Photo', 'photo_user_id', 'user_id');
+    }
+
     public function bookings()
     {
         return $this->hasMany('App\Booking', 'requestor_id', 'user_id');

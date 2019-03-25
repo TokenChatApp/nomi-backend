@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 require '../vendor/autoload.php';
 
 use App\BookingItem;
+use App\Photo;
 use App\Settings;
 use App\User;
 use App\Mail\SignupEmail;
@@ -46,6 +47,17 @@ class UserController extends Controller
 
     public function create(Request $request)
     {
+        $attributes = [
+            'username' => 'ユーザー名',
+            'display_name' => 'ニックネーム',
+            'age' => '年齢',
+            'mobile_no' => '携帯番号',
+            'email' => 'メールアドレス',
+            'password' => 'パスワード',
+            'gender' => '性別'
+            //'referral' => '紹介コード'
+        ];
+
         $validator = Validator::make($request->all(), [
            'username' => 'required|max:100',
            'display_name' => 'required|max:100',
@@ -53,11 +65,29 @@ class UserController extends Controller
            'mobile_no' => 'required|max:20',
            'email' => 'required|max:200|email|unique:users,email',
            'password' => 'required|string|max:100',
-           'gender' => 'required|max:10',
-           'referral' => 'exists:users,username'
-        ]);
+           'gender' => 'required|max:10'
+           //'referral' => 'exists:users,username'
+        ], [], $attributes);
 
         if ($request->gender == 'F') {
+            $attributes = [
+                'username' => 'ユーザー名',
+                'display_name' => 'ニックネーム',
+                'age' => '年齢',
+                'mobile_no' => '携帯番号',
+                'email' => 'メールアドレス',
+                'password' => 'パスワード',
+                'gender' => '性別',
+                'city_id' => '都市',
+                'place_id' => '場所',
+                'height' => '身長',
+                'weight' => '体重',
+                'language' => '言語',
+                'nationality' => '国籍',
+                'intro' => '自己紹介'
+                //'referral' => '紹介コード'
+            ];
+
             $validator = Validator::make($request->all(), [
                 'username' => 'required|max:100',
                 'display_name' => 'required|max:100',
@@ -72,13 +102,13 @@ class UserController extends Controller
                 'weight' => 'numeric',
                 'language' => '',
                 'nationality' => '',
-                'intro' => 'required',
-                'referral' => 'exists:users,username'
-            ]);
+                'intro' => 'required'
+                //'referral' => 'exists:users,username'
+            ], [], $attributes);
         }
         
         if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to signup.',
+            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_signup'),
                                           'errors' => $validator->messages(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
@@ -162,7 +192,7 @@ class UserController extends Controller
         }
 
         if ($request->file('avatar')) {
-            $filename = $request->file('avatar')->getClientOriginalName();;
+            $filename = time().'_'.$request->file('avatar')->getClientOriginalName();;
             $image = $request->file('avatar');
             Flysystem::put($filename, File::get($request->file('avatar')));
 
@@ -201,14 +231,114 @@ class UserController extends Controller
                             'nomi-token' => $token
                         ]);
     }
-   
-    public function search(Request $request)
+
+    public function show(Request $request)
     {
+        $user = $request->auth;
+        $user->photos = Photo::where('photo_user_id', $user->user_id)
+                             ->get();
+        return response()->json($user)
+                        ->withHeaders([
+                            'Access-Control-Allow-Credentials' => 'true',
+                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN,
+                            'x-csrf-token' => $request->get('x-csrf-token')
+                        ]);
+    }
+   
+    public function update(Request $request)
+    { 
+        $user = $request->auth;
+
+        $attributes = [
+            'place_id' => '都市',
+            'city_id' => '場所'
+        ];
+
         $validator = Validator::make($request->all(), [
            'place_id' => 'required|numeric',
-           'city_id' => 'required|numeric',
-           'request_date' => 'required'
-        ]);
+           'city_id' => 'required|numeric'
+        ], [], $attributes);
+        
+        if ($validator->fails()) {
+            return response()->make(array('status' => false, 'errorMessage' => 'Unable to update location.',
+                                          'errors' => $validator->messages(), 'session' => false), 400)
+                             ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
+                            ]);
+        }
+
+        if ($request->place_id) {
+            $user->place_id = $request->place_id;
+        }
+        if ($request->city_id) {
+            $user->city_id = $request->city_id;
+        }
+
+        $user->save();
+        return response()->json($user)
+                         ->withHeaders([
+                            'Access-Control-Allow-Credentials' => 'true',
+                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN
+                        ]);
+    }
+
+    public function update_intro(Request $request)
+    { 
+        $user = $request->auth;
+
+        $attributes = [
+            'intro' => '自己紹介'
+        ];
+
+        $validator = Validator::make($request->all(), [
+           'intro' => 'required'
+        ], [], $attributes);
+        
+        if ($validator->fails()) {
+            return response()->make(array('status' => false, 'errorMessage' => 'Unable to update intro.',
+                                          'errors' => $validator->messages(), 'session' => false), 400)
+                             ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
+                            ]);
+        }
+
+        if ($request->intro) {
+            $user->intro = $request->intro;
+        }
+
+        $user->save();
+        return response()->json($user)
+                         ->withHeaders([
+                            'Access-Control-Allow-Credentials' => 'true',
+                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN
+                        ]);
+    }
+
+    public function search(Request $request)
+    {
+        $attributes = [
+            'request_date' => '日にち',
+            'city_id' => '都市',
+            'place_id' => '場所'
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'request_date' => 'required',
+            'city_id' => 'required|numeric',
+            'place_id' => 'required|numeric'
+        ], [], $attributes);
 
         if ($validator->fails()) {
             return response()->make(array('status' => false, 'errorMessage' => 'Unable to find available girls.',
@@ -282,51 +412,25 @@ class UserController extends Controller
                         ]);
     }
 
-    public function show(Request $request)
-    {
-        $user = $request->auth;
-        return response()->json(array('avatar' => $user->avatar,
-                                      'display_name' => $user->display_name,
-                                      'username' => $user->username,
-                                      'email' => $user->email,
-                                      'gender' => $user->gender,
-                                      'age' => $user->age,
-                                      'mobile_no' => $user->mobile_no,
-                                      'rate_level' => $user->rate_level,
-                                      'rate_per_session' => $user->rate_per_session,
-                                      'city_id' => $user->city_id,
-                                      'place_id' => $user->place_id,
-                                      'height' => $user->height,
-                                      'weight' => $user->weight,
-                                      'language' => $user->language,
-                                      'nationality' => $user->nationality,
-                                      'intro' => $user->intro))
-                        ->withHeaders([
-                            'Access-Control-Allow-Credentials' => 'true',
-                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => Settings::ORIGIN,
-                            'x-csrf-token' => $request->get('x-csrf-token')
-                        ]);
-    }
-
     public function upload_avatar(Request $request)
     {
         $user = $request->auth;
 
         if ($request->file('avatar')) {
-            $filename = $request->file('avatar')->getClientOriginalName();;
+            if ($user->avatar != NULL || $user->avatar != '') {
+                if (Flysystem::has($user->avatar)) {
+                    Flysystem::delete($user->avatar);
+                }
+            }
+
+            $filename = time().'_'.$request->file('avatar')->getClientOriginalName();;
             $image = $request->file('avatar');
             Flysystem::put($filename, File::get($request->file('avatar')));
 
             $user->avatar = $filename;
             $user->save();
 
-            return response()->json(array('URLID' => $user->url,
-                                          'Username' => $user->username,
-                                          'Avatar' => $user->avatar,
-                                          'Gender' => $user->gender,
-                                          'Age' => $user->age))
+            return response()->json($user)
                             ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -341,16 +445,14 @@ class UserController extends Controller
     {
         $user = $request->auth;
 
-        Flysystem::delete($user->avatar);
+        if ($user->avatar != NULL) {
+            if (Flysystem::has($user->avatar)) {
+                Flysystem::delete($user->avatar);
+            }
+            $user->avatar = '';
+            $user->save();
 
-        $user->avatar = '';
-        $user->save();
-
-        return response()->json(array('URLID' => $user->url,
-                                      'Username' => $user->username,
-                                      'Avatar' => $user->avatar,
-                                      'Gender' => $user->gender,
-                                      'Age' => $user->age))
+            return response()->json($user)
                         ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -358,55 +460,63 @@ class UserController extends Controller
                             'Access-Control-Allow-Origin' => Settings::ORIGIN,
                             'x-csrf-token' => $request->get('x-csrf-token')
                         ]);
+        }        
+
+        return response()->make(array('status' => false, 'errorMessage' => 'There is no avatar to be removed.',
+                                      'errors' => array(), 'session' => false), 400)
+                             ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
+                            ]);
     }
-   
-    public function show_avatar(Request $request)
+
+    public function upload_photo(Request $request)
     {
         $user = $request->auth;
-        $path = storage_path('files').'/'.$user->avatar;
-
-        if ($user->avatar == null || $user->avatar = '' || !File::exists($path)) {
-            return;
-        }
-
-        $file = File::get($path);
-        $type = File::mimeType($path);
-
-        $response = response()->make($file, 200);
-        $response->header('Content-Type', $type);
-
-        return $response;
-    }
-
-    public function fetch_avatar(Request $request)
-    {
-        $path = storage_path('files').'/'.$request->avatar;
-
-        if ($request->avatar == null || $request->avatar = '' || !File::exists($path)) {
-            return;
-        }
-
-        $file = File::get($path);
-        $type = File::mimeType($path);
-
-        $response = response()->make($file, 200);
-        $response->header('Content-Type', $type);
-
-        return $response;
-    }
-
-    public function update(Request $request)
-    { 
-        $user = $request->auth;
-
-        $validator = Validator::make($request->all(), [
-           'place_id' => 'required|numeric',
-           'city_id' => 'required|numeric'
-        ]);
         
-        if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to update location.',
-                                          'errors' => $validator->messages(), 'session' => false), 400)
+        if ($request->hasFile('photos')) {
+            $files = $request->file('photos');
+            foreach ($files as $photo) {
+                $filename = time().'_'.$photo->getClientOriginalName();
+                Flysystem::put($filename, File::get($photo));
+
+                $photo = new Photo;
+                $photo->photo_url = $filename;
+                $photo->photo_user_id = $user->user_id;
+                $photo->save();
+            }
+
+            return response()->json($user)
+                            ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN,
+                                'x-csrf-token' => $request->get('x-csrf-token')
+                            ]);
+        }
+        else {
+            return response()->make(array('status' => false, 'errorMessage' => 'No photos uploaded.',
+                                          'errors' => array(), 'session' => false), 400)
+                             ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN
+                            ]);
+        }
+    }
+
+    public function remove_photo(Request $request, $id)
+    {
+        $user = $request->auth;
+        $photo = Photo::find($id);
+
+        if ($photo == null) {
+            return response()->make(array('status' => false, 'errorMessage' => 'Unable to remove photo. Photo does not exist.',
+                                          'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -415,38 +525,25 @@ class UserController extends Controller
                             ]);
         }
 
-        if ($request->place_id) {
-            $user->place_id = $request->place_id;
+        if ($photo->photo_user_id == $user->user_id) {
+            if (Flysystem::has($photo->photo_url)) {
+                Flysystem::delete($photo->photo_url);
+            }
+            Photo::find($id)->delete();
+
+            return response()->make(array('status' => true, 'message' => 'Photo removed.',
+                                          'errors' => array(), 'session' => true), 200)
+                            ->withHeaders([
+                                'Access-Control-Allow-Credentials' => 'true',
+                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                'Access-Control-Allow-Origin' => Settings::ORIGIN,
+                                'x-csrf-token' => $request->get('x-csrf-token')
+                            ]);
         }
-        if ($request->city_id) {
-            $user->city_id = $request->city_id;
-        }
-
-        $user->save();
-        return response()->json(array('URLID' => $user->url,
-                                      'Username' => $user->username,
-                                      'Avatar' => $user->avatar,
-                                      'Gender' => $user->gender,
-                                      'Age' => $user->age))
-                         ->withHeaders([
-                            'Access-Control-Allow-Credentials' => 'true',
-                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => Settings::ORIGIN
-                        ]);
-    }
-
-    public function update_intro(Request $request)
-    { 
-        $user = $request->auth;
-
-        $validator = Validator::make($request->all(), [
-           'intro' => 'required'
-        ]);
-        
-        if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to update intro.',
-                                          'errors' => $validator->messages(), 'session' => false), 400)
+        else {
+            return response()->make(array('status' => false, 'errorMessage' => 'Unable to remove photo. You are not authorized.',
+                                          'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -454,23 +551,6 @@ class UserController extends Controller
                                 'Access-Control-Allow-Origin' => Settings::ORIGIN
                             ]);
         }
-
-        if ($request->intro) {
-            $user->intro = $request->intro;
-        }
-
-        $user->save();
-        return response()->json(array('URLID' => $user->url,
-                                      'Username' => $user->username,
-                                      'Avatar' => $user->avatar,
-                                      'Gender' => $user->gender,
-                                      'Age' => $user->age))
-                         ->withHeaders([
-                            'Access-Control-Allow-Credentials' => 'true',
-                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => Settings::ORIGIN
-                        ]);
     }
 
 }

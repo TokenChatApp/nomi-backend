@@ -40,10 +40,15 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $attributes = [
+            'username' => 'ユーザー名',
+            'password' => 'パスワード'
+        ];
+
         $validator = Validator::make($request->all(), [
            'username' => 'required',
            'password' => 'required'
-        ]);
+        ], [], $attributes);
         
         if ($validator->fails()) {
             return response()->make(array('status' => false, 'errorMessage' => 'Unable to login.',
@@ -85,7 +90,7 @@ class AuthController extends Controller
                 }
             }
             else {
-                return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Username not found',
+                return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Username not found.',
                                               'errors' => array(), 'session' => false), 400)
                                  ->withHeaders([
                                     'Access-Control-Allow-Credentials' => 'true',
@@ -96,7 +101,7 @@ class AuthController extends Controller
             }
         }
         else if ($user != null && !Hash::check($request->password, $user->password)) {
-            return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Password is incorrect',
+            return response()->make(array('status' => false, 'errorMessage' => 'Unable to login. Password is incorrect.',
                                           'errors' => array(), 'session' => false), 400)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',

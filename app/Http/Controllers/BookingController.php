@@ -41,12 +41,19 @@ class BookingController extends Controller
     {
         $user = $request->auth;
 
+        $attributes = [
+            'request_date' => '日にち',
+            'city_id' => '都市',
+            'place_id' => '場所',
+            'profile_ids' => 'プロファイルID'
+        ];
+
         $validator = Validator::make($request->all(), [
            'request_date' => 'required',
            'city_id' => 'numeric',
            'place_id' => 'numeric',
            'profile_ids' => 'required'
-        ]);
+        ], [], $attributes);
 
         $strings = explode(" ", $request->request_date);
 
@@ -90,7 +97,7 @@ class BookingController extends Controller
             }
         }
         
-        return response()->make(array('status' => true, 'message' => 'Booking created successfully', 'session' => true), 200)
+        return response()->make(array('status' => true, 'message' => 'Booking created successfully.', 'session' => true), 200)
                          ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
                             'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -261,10 +268,15 @@ class BookingController extends Controller
     { 
         $user = $request->auth;
 
-    $validator = Validator::make($request->all(), [
+        $attributes = [
+            'request_id' => '予約ID',
+            'accepted' => '受け入れた'
+        ];
+
+        $validator = Validator::make($request->all(), [
            'request_id' => 'required',
            'accepted' => 'required'
-        ]);
+        ], [], $attributes);
 
         if ($validator->fails()) {
             return response()->make(array('status' => false, 'errorMessage' => 'Unable to accept booking.',
@@ -286,7 +298,7 @@ class BookingController extends Controller
             $booking->is_accepted = $request->accepted;
             $booking->save();
             
-            return response()->make(array('status' => true, 'message' => 'Booking updated successfully', 'session' => true), 200)
+            return response()->make(array('status' => true, 'message' => 'Booking updated successfully.', 'session' => true), 200)
                              ->withHeaders([
                                 'Access-Control-Allow-Credentials' => 'true',
                                 'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
@@ -310,11 +322,17 @@ class BookingController extends Controller
     { 
         $user = $request->auth;
 
+        $attributes = [
+            'request_id' => '予約ID',
+            'profile_ids' => 'プロファイルID',
+            'stripe_token' => '支払いトークン'
+        ];
+
         $validator = Validator::make($request->all(), [
            'request_id' => 'required',
            'profile_ids' => 'required',
            'stripe_token' => 'required'
-        ]);
+        ], [], $attributes);
 
         if ($validator->fails()) {
             return response()->make(array('status' => false, 'errorMessage' => 'Unable to confirm booking.',
@@ -378,7 +396,7 @@ class BookingController extends Controller
                 $booking->request_total_fee = $total_amount;
                 $booking->save();
                 
-                return response()->make(array('status' => true, 'message' => 'Booking confirmed successfully', 'session' => true, 'profiles' => $profiles), 200)
+                return response()->make(array('status' => true, 'message' => 'Booking confirmed successfully.', 'session' => true, 'profiles' => $profiles), 200)
                                  ->withHeaders([
                                     'Access-Control-Allow-Credentials' => 'true',
                                     'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',

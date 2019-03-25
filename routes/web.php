@@ -30,14 +30,11 @@ $router->group(['prefix' => 'api/v1/'], function() use($router) {
 	$router->options('profile/info', 'UserController@init');
 	$router->options('profile/update', 'UserController@init');
 	$router->options('profile/update_intro', 'UserController@init');
-	$router->options('profile/show_avatar', 'UserController@init');
-	$router->options('profile/fetch_avatar', 'UserController@init');
 	$router->options('profile/search', 'UserController@init');
 	$router->options('profile/upload_avatar', 'UserController@init');
 	$router->options('profile/remove_avatar', 'UserController@init');
 
 	$router->post('profile/search', 'UserController@search');
-	$router->post('profile/fetch_avatar', 'UserController@fetch_avatar');
 
 	$router->options('booking', 'BookingController@init');
 	$router->options('booking/show/{id}', 'BookingController@init');
@@ -55,15 +52,16 @@ $router->group(['prefix' => 'api/v1/'], function() use($router) {
 	$router->get('notification', 'NotifyController@send');
 });
 
-$router->group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function() use($router) {	
+$router->group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function() use($router) {
 	$router->post('auth/logout', 'AuthController@logout');
 
 	$router->get('profile/info', 'UserController@show');
 	$router->post('profile/update', 'UserController@update');
 	$router->post('profile/update_intro', 'UserController@update_intro');
-	$router->get('profile/show_avatar', 'UserController@show_avatar');
 	$router->post('profile/upload_avatar', 'UserController@upload_avatar');
-	$router->post('profile/remove_avatar', 'UserController@remove_avatar');
+	$router->delete('profile/remove_avatar', 'UserController@remove_avatar');
+	$router->post('profile/upload_photo', 'UserController@upload_photo');
+	$router->delete('profile/remove_photo/{id}', 'UserController@remove_photo');
 
 	$router->put('booking', 'BookingController@create');
 	$router->get('booking/show/{id}', 'BookingController@show');

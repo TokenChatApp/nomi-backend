@@ -12,7 +12,7 @@ return [
      * The log writer used to write the request to a log.
      * It should implement `LogWriter`.
      */
-    'log_writer' => \Spatie\HttpLogger\DefaultLogWriter::class,
+    'log_writer' => \App\Logger\CustomHttpLogger::class,
 
     /*
      * Filter out body fields which will never be logged.

@@ -25,6 +25,8 @@ $app->withFacades();
 
 $app->withEloquent();
 
+$app->configure('http-logger');
+
 if (!class_exists('Stripe')) {
     class_alias('Cartalyst\Stripe\Laravel\Facades\Stripe', 'Stripe');
 }

@@ -286,14 +286,16 @@ class UserController extends Controller
         $user->save();
 
         $files = $request->file('photos');
-        foreach ($files as $photo) {
-            $filename = time().'_'.$photo->getClientOriginalName();
-            Flysystem::put($filename, File::get($photo));
+        if ($files != null) {
+            foreach ($files as $photo) {
+                $filename = time().'_'.$photo->getClientOriginalName();
+                Flysystem::put($filename, File::get($photo));
 
-            $photo = new Photo;
-            $photo->photo_url = $filename;
-            $photo->photo_user_id = $user->user_id;
-            $photo->save();
+                $photo = new Photo;
+                $photo->photo_url = $filename;
+                $photo->photo_user_id = $user->user_id;
+                $photo->save();
+            }
         }
 
         $user->photos = Photo::where('photo_user_id', $user->user_id)
@@ -473,14 +475,16 @@ class UserController extends Controller
         
         if ($request->hasFile('photos')) {
             $files = $request->file('photos');
-            foreach ($files as $photo) {
-                $filename = time().'_'.$photo->getClientOriginalName();
-                Flysystem::put($filename, File::get($photo));
+            if ($files != null) {
+                foreach ($files as $photo) {
+                    $filename = time().'_'.$photo->getClientOriginalName();
+                    Flysystem::put($filename, File::get($photo));
 
-                $photo = new Photo;
-                $photo->photo_url = $filename;
-                $photo->photo_user_id = $user->user_id;
-                $photo->save();
+                    $photo = new Photo;
+                    $photo->photo_url = $filename;
+                    $photo->photo_user_id = $user->user_id;
+                    $photo->save();
+                }
             }
 
             return response()->json($user)

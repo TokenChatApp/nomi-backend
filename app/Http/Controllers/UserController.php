@@ -253,12 +253,14 @@ class UserController extends Controller
 
         $attributes = [
             'place_id' => '都市',
-            'city_id' => '場所'
+            'city_id' => '場所',
+            'intro' => '自己紹介'
         ];
 
         $validator = Validator::make($request->all(), [
-           'place_id' => 'required|numeric',
-           'city_id' => 'required|numeric'
+           'place_id' => 'numeric',
+           'city_id' => 'numeric',
+           'intro' => ''
         ], [], $attributes);
         
         if ($validator->fails()) {
@@ -278,45 +280,25 @@ class UserController extends Controller
         if ($request->city_id) {
             $user->city_id = $request->city_id;
         }
-
-        $user->save();
-        return response()->json($user)
-                         ->withHeaders([
-                            'Access-Control-Allow-Credentials' => 'true',
-                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => Settings::ORIGIN
-                        ]);
-    }
-
-    public function update_intro(Request $request)
-    { 
-        $user = $request->auth;
-
-        $attributes = [
-            'intro' => '自己紹介'
-        ];
-
-        $validator = Validator::make($request->all(), [
-           'intro' => 'required'
-        ], [], $attributes);
-        
-        if ($validator->fails()) {
-            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_update_intro'),
-                                          'errors' => $validator->messages(), 'session' => false), 400)
-                             ->withHeaders([
-                                'Access-Control-Allow-Credentials' => 'true',
-                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => Settings::ORIGIN
-                            ]);
-        }
-
         if ($request->intro) {
             $user->intro = $request->intro;
         }
-
         $user->save();
+
+        $files = $request->file('photos');
+        foreach ($files as $photo) {
+            $filename = time().'_'.$photo->getClientOriginalName();
+            Flysystem::put($filename, File::get($photo));
+
+            $photo = new Photo;
+            $photo->photo_url = $filename;
+            $photo->photo_user_id = $user->user_id;
+            $photo->save();
+        }
+
+        $user->photos = Photo::where('photo_user_id', $user->user_id)
+                             ->get();
+                             
         return response()->json($user)
                          ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',

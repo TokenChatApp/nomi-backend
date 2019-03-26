@@ -351,23 +351,43 @@ class UserController extends Controller
                             ]);
         }
 
+        $girls = array();
+        $girls['exact_girls'] = $this->get_available_girls($request->request_date, $request->city_id, $request->place_id);
+        $girls['nearby_girls'] = array();
+        $nearby_girls = array_diff($this->get_available_girls($request->request_date, $request->city_id, NULL), $girls['exact_girls']);
+        foreach ($nearby_girls as $g) {
+            $girls['nearby_girls'][] = $g;
+        } 
+
+        return response()->json($girls)
+                        ->withHeaders([
+                            'Access-Control-Allow-Credentials' => 'true',
+                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                            'Access-Control-Allow-Origin' => Settings::ORIGIN,
+                            'x-csrf-token' => $request->get('x-csrf-token')
+                        ]);
+    }
+
+    private function get_available_girls($request_date, $city_id, $place_id)
+    {
         $users = array();
         $available_users = array();
 
-        if ($request->place_id) {
+        if ($place_id != NULL) {
             $users = User::select('*')
-                        ->where('place_id', $request->place_id)
+                        ->where('place_id', $place_id)
                         ->where('gender', 'F')
                         ->get();
         }
-        else if ($request->city_id) {
+        else if ($city_id != NULL) {
             $users = User::select('*')
-                        ->where('city_id', $request->city_id)
+                        ->where('city_id', $city_id)
                         ->where('gender', 'F')
                         ->get();
         }
 
-        $time = strtotime($request->request_date);
+        $time = strtotime($request_date);
         $start_time = date('Y-m-d H:i', strtotime('-30 minutes', $time));
         $end_time = date('Y-m-d H:i', strtotime('+150 minutes', $time));
 
@@ -402,14 +422,7 @@ class UserController extends Controller
             }
         }
 
-        return response()->json($available_users)
-                        ->withHeaders([
-                            'Access-Control-Allow-Credentials' => 'true',
-                            'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                            'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                            'Access-Control-Allow-Origin' => Settings::ORIGIN,
-                            'x-csrf-token' => $request->get('x-csrf-token')
-                        ]);
+        return $available_users;
     }
 
     public function upload_avatar(Request $request)

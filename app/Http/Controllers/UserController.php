@@ -504,27 +504,47 @@ class UserController extends Controller
         }
     }
 
-    public function remove_photo(Request $request, $id)
+    public function remove_photo(Request $request)
     {
         $user = $request->auth;
-        $photo = Photo::find($id);
 
-        if ($photo == null) {
-            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_remove_photo_missing'),
-                                          'errors' => array(), 'session' => false), 400)
-                             ->withHeaders([
-                                'Access-Control-Allow-Credentials' => 'true',
-                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => Settings::ORIGIN
-                            ]);
+        if (!$request->photo_ids) {
+            return;
         }
 
-        if ($photo->photo_user_id == $user->user_id) {
-            if (Flysystem::has($photo->photo_url)) {
-                Flysystem::delete($photo->photo_url);
+        $photo_ids = explode(",", $request->photo_ids);
+        if ($photo_ids != null) {
+            foreach ($photo_ids as $id) {
+                $photo = Photo::find($id);
+
+                if ($photo == null) {
+                    return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_remove_photo_missing'),
+                                                  'errors' => array(), 'session' => false), 400)
+                                     ->withHeaders([
+                                        'Access-Control-Allow-Credentials' => 'true',
+                                        'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                        'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                        'Access-Control-Allow-Origin' => Settings::ORIGIN
+                                    ]);
+                }
+
+                if ($photo->photo_user_id == $user->user_id) {
+                    if (Flysystem::has($photo->photo_url)) {
+                        Flysystem::delete($photo->photo_url);
+                    }
+                    Photo::find($id)->delete();
+                }
+                else {
+                    return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_remove_photo_denied'),
+                                                  'errors' => array(), 'session' => false), 400)
+                                     ->withHeaders([
+                                        'Access-Control-Allow-Credentials' => 'true',
+                                        'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
+                                        'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
+                                        'Access-Control-Allow-Origin' => Settings::ORIGIN
+                                    ]);
+                }
             }
-            Photo::find($id)->delete();
 
             return response()->make(array('status' => true, 'message' => __('messages.success_profile_remove_photo'),
                                           'errors' => array(), 'session' => true), 200)
@@ -535,17 +555,7 @@ class UserController extends Controller
                                 'Access-Control-Allow-Origin' => Settings::ORIGIN,
                                 'x-csrf-token' => $request->get('x-csrf-token')
                             ]);
-        }
-        else {
-            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_remove_photo_denied'),
-                                          'errors' => array(), 'session' => false), 400)
-                             ->withHeaders([
-                                'Access-Control-Allow-Credentials' => 'true',
-                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => Settings::ORIGIN
-                            ]);
-        }
+        }        
     }
 
 }

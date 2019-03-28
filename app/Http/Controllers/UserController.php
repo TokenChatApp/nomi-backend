@@ -236,7 +236,8 @@ class UserController extends Controller
     {
         $user = $request->auth;
         $user->photos = Photo::where('photo_user_id', $user->user_id)
-                             ->get();
+                            ->orderBy('photo_pos', 'asc')
+                            ->get();
         return response()->json($user)
                         ->withHeaders([
                             'Access-Control-Allow-Credentials' => 'true',
@@ -287,14 +288,18 @@ class UserController extends Controller
 
         $files = $request->file('photos');
         if ($files != null) {
-            foreach ($files as $photo) {
-                $filename = time().'_'.$photo->getClientOriginalName();
-                Flysystem::put($filename, File::get($photo));
+            foreach ($files as $f) {
+                $filename = time().'_'.mt_rand().'_'.$f->getClientOriginalName();
+                Flysystem::put($filename, File::get($f));
 
-                $photo = new Photo;
-                $photo->photo_url = $filename;
-                $photo->photo_user_id = $user->user_id;
-                $photo->save();
+                $file_parts = explode('.', $f->getClientOriginalName());
+                if (sizeof($file_parts) == 2) {
+                    $photo = new Photo;
+                    $photo->photo_url = $filename;
+                    $photo->photo_pos = $file_parts[0];
+                    $photo->photo_user_id = $user->user_id;
+                    $photo->save();
+                }
             }
         }
 
@@ -467,45 +472,6 @@ class UserController extends Controller
                                 'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
                                 'Access-Control-Allow-Origin' => Settings::ORIGIN
                             ]);
-    }
-
-    public function upload_photo(Request $request)
-    {
-        $user = $request->auth;
-        
-        if ($request->hasFile('photos')) {
-            $files = $request->file('photos');
-            if ($files != null) {
-                foreach ($files as $photo) {
-                    $filename = time().'_'.$photo->getClientOriginalName();
-                    Flysystem::put($filename, File::get($photo));
-
-                    $photo = new Photo;
-                    $photo->photo_url = $filename;
-                    $photo->photo_user_id = $user->user_id;
-                    $photo->save();
-                }
-            }
-
-            return response()->json($user)
-                            ->withHeaders([
-                                'Access-Control-Allow-Credentials' => 'true',
-                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => Settings::ORIGIN,
-                                'x-csrf-token' => $request->get('x-csrf-token')
-                            ]);
-        }
-        else {
-            return response()->make(array('status' => false, 'errorMessage' => __('messages.error_profile_upload_photo'),
-                                          'errors' => array(), 'session' => false), 400)
-                             ->withHeaders([
-                                'Access-Control-Allow-Credentials' => 'true',
-                                'Access-Control-Allow-Headers' => 'X-CSRF-Token, X-Requested-With, X-authentication, Content-Type, X-client, Authorization, Accept, Nomi-Token',
-                                'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, OPTIONS',
-                                'Access-Control-Allow-Origin' => Settings::ORIGIN
-                            ]);
-        }
     }
 
     public function remove_photo(Request $request)

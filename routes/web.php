@@ -60,7 +60,6 @@ $router->group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function() u
 	$router->post('profile/update_intro', 'UserController@update_intro');
 	$router->post('profile/upload_avatar', 'UserController@upload_avatar');
 	$router->delete('profile/remove_avatar', 'UserController@remove_avatar');
-	$router->post('profile/upload_photo', 'UserController@upload_photo');
 	$router->post('profile/remove_photo', 'UserController@remove_photo');
 
 	$router->put('booking', 'BookingController@create');

@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'success_reset_password' => 'We have sent you an email. Please check your email on how to reset your password.',
+
+    'error_reset_password' => 'Unable to reset password.',
+    'error_reset_password_invalid_token' => 'Unable to reset password. You have provided an invalid token.',
+    'success_update_password' => 'Password reseted successfully. Please login with your new password now.',
+
     'error_signup' => 'サインアップができません。',
     'error_signup_username_duplicate' => 'ユーザー名は既に存在します。',
 

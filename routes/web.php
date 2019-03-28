@@ -36,6 +36,11 @@ $router->group(['prefix' => 'api/v1/'], function() use($router) {
 
 	$router->post('profile/search', 'UserController@search');
 
+	$router->options('password/reset', 'VerificationController@init');
+	$router->options('password/update', 'VerificationController@init');
+	$router->post('password/reset', 'VerificationController@reset');
+	$router->post('password/update', 'VerificationController@update');
+
 	$router->options('booking', 'BookingController@init');
 	$router->options('booking/show/{id}', 'BookingController@init');
 	$router->options('booking/retrieve', 'BookingController@init');

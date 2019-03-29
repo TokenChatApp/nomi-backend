@@ -85,8 +85,8 @@ class VerificationController extends Controller
     {
         $attributes = [
             'password' => 'パスワード',
-            'password_confirmation' => 'パスワード',
-            'token' => 'Token'
+            'password_confirmation' => 'パスワード再度認証',
+            'token' => 'トークン'
         ];
 
         $validator = Validator::make($request->all(), [

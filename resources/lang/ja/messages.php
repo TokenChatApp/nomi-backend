@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'success_reset_password' => 'We have sent you an email. Please check your email on how to reset your password.',
+    'success_reset_password' => 'メールを送りました。パスワードの再設定方法については、メールにて確認してください。',
 
-    'error_reset_password' => 'Unable to reset password.',
-    'error_reset_password_invalid_token' => 'Unable to reset password. You have provided an invalid token.',
-    'success_update_password' => 'Password reseted successfully. Please login with your new password now.',
+    'error_reset_password' => 'パスワードがリセットできませんでした',
+    'error_reset_password_invalid_token' => 'パスワードがリセットできませんでした。無効なトークンでした。',
+    'success_update_password' => 'パスワードがリセットされました。今すぐ新しいパスワードでログインしてください。',
 
     'error_signup' => 'サインアップができません。',
     'error_signup_username_duplicate' => 'ユーザー名は既に存在します。',

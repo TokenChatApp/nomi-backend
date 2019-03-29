@@ -29,7 +29,7 @@ class ResetPasswordEmail extends Mailable
     public function build()
     {
         return $this->view('reset_password_email')
-        			->subject('パスワードを再設定する')
+        			->subject('パスワードリセット通知')
                     ->with([
                         'username' => $this->user->username,
                         'token' => $this->verification->verification_key
